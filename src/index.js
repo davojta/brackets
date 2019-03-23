@@ -3,6 +3,7 @@
 // start with second case
 // third case need to count closing / open brackets
 // intruduce refactoring / stack
+// 2.5 hours
 
 module.exports = function check(str, bracketsConfig) {
   // const config1 = [['(', ')']];
@@ -25,11 +26,12 @@ module.exports = function check(str, bracketsConfig) {
   // });
 
   const chars = str.split('');
-  console.log('chars', chars);
+  // console.log('chars', chars);
   
 
   const checkOpenBracket = (config, char) => {
-    return (config[0].sign === char && config[1].count === config[0].count);
+    return (config[0].sign === char && config[1].count <= config[0].count);
+    // return (config[0].sign === char && config[1].count === config[0].count);
   }
 
   const checkConfig = (configs, char) => {
@@ -37,25 +39,30 @@ module.exports = function check(str, bracketsConfig) {
       const config = bracketConfig.bracketConfig;
       const isPossibleToOpen = checkOpenBracket(config, char);
       const isOtherClosed = configs.every(config => config.closed);
-      
-      if (config[0].sign === lastOpened[0] && config[1].sign === char && (config[0].count - config[1].count) === 1) {
+      if (config[0].sign === lastOpened[0] && config[1].sign === char && (config[0].count - config[1].count) >= 1) {
+        // console.log('checkConfig', char, config)
         config[1].count += 1; 
         lastOpened.shift();
         bracketConfig.closed = true;
       } else if (isPossibleToOpen) {
+        // console.log('checkConfig', char, config)
         config[0].count += 1; 
         lastOpened.unshift(char);
         bracketConfig.closed = false;
-      } 
-      
+      } else {
+        if (config[1].sign === char) {
+          globalClose = false
+        }
+      }
     });
   }
 
   chars.forEach(char => {
+    // console.log('check char - ', char, ' ===')
     checkConfig(configs, char);
   });
 
-  console.log('configs', JSON.stringify(configs, 0, 2));
+  // console.log('configs', JSON.stringify(configs, 0, 2));
 
   return configs.every(config => config.closed) && globalClose;
 }
