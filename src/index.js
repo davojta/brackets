@@ -37,18 +37,17 @@ module.exports = function check(str, bracketsConfig) {
       const config = bracketConfig.bracketConfig;
       const isPossibleToOpen = checkOpenBracket(config, char);
       const isOtherClosed = configs.every(config => config.closed);
-      if (isPossibleToOpen) {
-        config[0].count += 1; 
-        lastOpened.unshift(char);
-        bracketConfig.closed = false;
-      } else if (isPossibleToOpen) {
-        // globalClose = false
-      }
+      
       if (config[0].sign === lastOpened[0] && config[1].sign === char && (config[0].count - config[1].count) === 1) {
         config[1].count += 1; 
         lastOpened.shift();
         bracketConfig.closed = true;
-      }
+      } else if (isPossibleToOpen) {
+        config[0].count += 1; 
+        lastOpened.unshift(char);
+        bracketConfig.closed = false;
+      } 
+      
     });
   }
 
